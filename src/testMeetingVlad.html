@@ -1,0 +1,56 @@
+<pre class="java" style="font-family:monospace;">pragma solidity <span style="color: #339933;">^</span>0.4.18<span style="color: #339933;">;</span>
+&nbsp;
+contract TestMeetingVlad <span style="color: #009900;">&#123;</span>
+&nbsp;
+  address owner<span style="color: #339933;">;</span>
+  string meetingDescription<span style="color: #339933;">;</span>
+  Participant<span style="color: #009900;">&#91;</span><span style="color: #009900;">&#93;</span> <span style="color: #000000; font-weight: bold;">public</span> participants<span style="color: #339933;">;</span>
+&nbsp;
+  struct Participant <span style="color: #009900;">&#123;</span>
+    uint256 passportNumberHash<span style="color: #339933;">;</span>
+  <span style="color: #009900;">&#125;</span>
+&nbsp;
+  <span style="color: #666666; font-style: italic;">// добавление участника по паспорту</span>
+  function registrationParticipantByPassportNumber<span style="color: #009900;">&#40;</span>uint passportNumber<span style="color: #009900;">&#41;</span> <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #009900;">&#123;</span>
+    <span style="color: #000000; font-weight: bold;">if</span> <span style="color: #009900;">&#40;</span>participants.<span style="color: #006633;">length</span> <span style="color: #339933;">!=</span> <span style="color: #cc66cc;">0</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+      <span style="color: #000000; font-weight: bold;">for</span> <span style="color: #009900;">&#40;</span>uint256 i <span style="color: #339933;">=</span> <span style="color: #cc66cc;">0</span><span style="color: #339933;">;</span> i <span style="color: #339933;">&lt;</span> participants.<span style="color: #006633;">length</span><span style="color: #339933;">;</span> i<span style="color: #339933;">++</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+        require<span style="color: #009900;">&#40;</span>participants<span style="color: #009900;">&#91;</span>i<span style="color: #009900;">&#93;</span>.<span style="color: #006633;">passportNumberHash</span> <span style="color: #339933;">!=</span> uint256<span style="color: #009900;">&#40;</span>keccak256<span style="color: #009900;">&#40;</span>passportNumber<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+      <span style="color: #009900;">&#125;</span>
+    <span style="color: #009900;">&#125;</span>
+    participants.<span style="color: #006633;">push</span><span style="color: #009900;">&#40;</span>Participant<span style="color: #009900;">&#40;</span>uint256<span style="color: #009900;">&#40;</span>keccak256<span style="color: #009900;">&#40;</span>passportNumber<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+  <span style="color: #009900;">&#125;</span>
+&nbsp;
+&nbsp;
+  <span style="color: #666666; font-style: italic;">// метод для тестирования количества участников</span>
+  function getCountParticipants<span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span> <span style="color: #000000; font-weight: bold;">public</span> constant returns <span style="color: #009900;">&#40;</span>uint<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+    <span style="color: #000000; font-weight: bold;">return</span> participants.<span style="color: #006633;">length</span><span style="color: #339933;">;</span>
+  <span style="color: #009900;">&#125;</span>
+&nbsp;
+  <span style="color: #666666; font-style: italic;">// проверка того, что участник зарегистрирован на определенную встречу по паспорту</span>
+  function isParticipantByPassport<span style="color: #009900;">&#40;</span>uint256 passportNumber<span style="color: #009900;">&#41;</span> <span style="color: #000000; font-weight: bold;">public</span> constant returns <span style="color: #009900;">&#40;</span>bool<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+    <span style="color: #000000; font-weight: bold;">if</span> <span style="color: #009900;">&#40;</span>participants.<span style="color: #006633;">length</span> <span style="color: #339933;">!=</span> <span style="color: #cc66cc;">0</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+      <span style="color: #000000; font-weight: bold;">for</span> <span style="color: #009900;">&#40;</span>uint256 i <span style="color: #339933;">=</span> <span style="color: #cc66cc;">0</span><span style="color: #339933;">;</span> i <span style="color: #339933;">&lt;</span> participants.<span style="color: #006633;">length</span><span style="color: #339933;">;</span> i<span style="color: #339933;">++</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+        <span style="color: #000000; font-weight: bold;">if</span> <span style="color: #009900;">&#40;</span>participants<span style="color: #009900;">&#91;</span>i<span style="color: #009900;">&#93;</span>.<span style="color: #006633;">passportNumberHash</span> <span style="color: #339933;">==</span> uint256<span style="color: #009900;">&#40;</span>keccak256<span style="color: #009900;">&#40;</span>passportNumber<span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span><span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+          <span style="color: #000000; font-weight: bold;">return</span> <span style="color: #000066; font-weight: bold;">true</span><span style="color: #339933;">;</span>
+        <span style="color: #009900;">&#125;</span>
+      <span style="color: #009900;">&#125;</span>
+    <span style="color: #009900;">&#125;</span>
+    <span style="color: #000000; font-weight: bold;">return</span> <span style="color: #000066; font-weight: bold;">false</span><span style="color: #339933;">;</span>
+  <span style="color: #009900;">&#125;</span>
+&nbsp;
+  <span style="color: #666666; font-style: italic;">// конструктор</span>
+  function TestMeetingVlad<span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span> <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #009900;">&#123;</span>
+    owner <span style="color: #339933;">=</span> msg.<span style="color: #006633;">sender</span><span style="color: #339933;">;</span>
+  <span style="color: #009900;">&#125;</span>
+&nbsp;
+  <span style="color: #666666; font-style: italic;">// регистрация произвольного текста</span>
+  function setMeetingDescription<span style="color: #009900;">&#40;</span>string value<span style="color: #009900;">&#41;</span> <span style="color: #000000; font-weight: bold;">public</span> <span style="color: #009900;">&#123;</span>
+    require<span style="color: #009900;">&#40;</span>msg.<span style="color: #006633;">sender</span> <span style="color: #339933;">==</span> owner<span style="color: #009900;">&#41;</span><span style="color: #339933;">;</span>
+    meetingDescription <span style="color: #339933;">=</span> value<span style="color: #339933;">;</span>
+  <span style="color: #009900;">&#125;</span>
+&nbsp;
+  function getMeetingDescription<span style="color: #009900;">&#40;</span><span style="color: #009900;">&#41;</span> <span style="color: #000000; font-weight: bold;">public</span> constant returns <span style="color: #009900;">&#40;</span>string<span style="color: #009900;">&#41;</span> <span style="color: #009900;">&#123;</span>
+    <span style="color: #000000; font-weight: bold;">return</span> meetingDescription<span style="color: #339933;">;</span>
+  <span style="color: #009900;">&#125;</span>
+<span style="color: #009900;">&#125;</span>
+&nbsp;</pre>
